@@ -5,14 +5,14 @@ import sys
 import git
 
 
-def main(repo_path, search_term):
+def main(repo_path, search_term, branch):
     commits = 0
     added = 0
     removed = 0
     authors = collections.Counter()
 
     repo = git.Repo(repo_path)
-    for commit in repo.iter_commits('master'):
+    for commit in repo.iter_commits(branch):
         if search_term in commit.message:
             commits += 1
             authors[commit.author.name] += 1
@@ -47,5 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('--filter', dest='filter',
                         help='Filter the commits by a substring in the commit '
                              'message')
+    parser.add_argument('--branch', dest='branch', default='master',
+                        help='The branch to search on. Defaulted to master')
     args = parser.parse_args()
-    main(args.repo, args.filter)
+    main(args.repo, args.filter, args.branch)
